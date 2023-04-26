@@ -1,0 +1,42 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+tornado <- read_csv("/Users/hanvuhavu/Downloads/tornado/1950-2021_actual_tornadoes.csv")
+```
+
+```{r}
+#Concat yr and om to another column
+tornado <- tornado %>% mutate(concated_column = paste(yr, om, sep = '_'))
+```
+
+```{r}
+#Drop duplicated rows using distinct()
+tornado_nodup <- tornado %>% distinct(concated_column, .keep_all = TRUE)
+
+#Check if there are any values that are not 1 in sg column
+any(tornado_nodup$sg != 1)
+```
+
+```{r}
+#Count tornadoes happened each year
+tornado_yearcount <- tornado_nodup %>% group_by(yr) %>% summarise(num_tor = n())
+
+#Check total number
+sum_x <- tornado_yearcount %>%
+  pull(num_tor) %>%
+  sum()
+
+```
+
+```{r}
+#By state
+tor_statecount <- tornado_nodup %>% group_by(st) %>% summarise(num_tor = n()) %>% arrange(desc(num_tor))
+```
+
